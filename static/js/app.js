@@ -1,10 +1,9 @@
 // read in data
 let data_url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
-let dropdown = d3.select('#selDataset')
 
 //initial make functions
-let addToDropdown = (arr) => {
+let addToDropdown = (arr, dropdown) => {
   for( n of arr){
     dropdown.append("option")
       .text(n)
@@ -67,9 +66,15 @@ let makeDemoTable = (meta_table,  metadata) => {
   }
 }
 
+let clearDemoTable = (meta_table) => {
+  meta_table.text("")
+}
+
 d3.json(data_url).then((data) => {
+  let dropdown = d3.select("#selDataset")
+
   // add vals to dropdown
-  addToDropdown(data.names);
+  addToDropdown(data.names, dropdown);
 
   // set initial index to zeo for first load
   let index = 0;
@@ -90,10 +95,28 @@ d3.json(data_url).then((data) => {
 
 // // upate plots when new sample is selected
 let updatePlotly = () => {
-  let index = dropdown.property("value")
-  console.log(`New entry index: ${index}`)
+  d3.json(data_url).then((data) => {
+    let dropdown = d3.select('#selDataset')
+    let val = dropdown.property("value")
+    let index = data.names.indexOf(val)
+    
+    console.log(index)
+    console.log(data.metadata)
+    console.log(data.metadata[index])
 
-  makeDemoTable(
+    //update demo table
+    let meta_table = d3.select("#sample-metadata")
+    clearDemoTable(meta_table);
+    makeDemoTable(meta_table,
+                Object.entries(data.metadata[index]))
+
+    //update gauge
+    // Plotly.restyle("gauge", "x", [x]);
+    //update hbar chart
+    // Plotly.restyle("gauge", "x", [x]);
+    //update bubble chart
+    // Plotly.restyle("gauge", "x", [x]);
+  })
 }
 
-dropdown.on("change", updatePlotly);
+d3.selectAll("#selDataset").on("change", updatePlotly);
