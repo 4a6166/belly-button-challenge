@@ -1,5 +1,4 @@
 let makeGauge = (value) => {
-
   // make gauge
   let data = [ {
       domain: { x: [0, 1], y: [0, 1] },
@@ -51,4 +50,10 @@ let makeGauge = (value) => {
   Plotly.newPlot('gauge', data, layout);
 }
 
-// TODO update plot when selection changes
+let updateGauge = (sample) => {
+  newData = {
+    'value': [sample]
+  }
+
+  Plotly.restyle('gauge', newData);
+}

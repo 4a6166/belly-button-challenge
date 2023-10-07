@@ -37,11 +37,13 @@ let makeHBar = (sample) => {
 }
 
 let updateHBar = (sample) => {
-  let h_sample = sample.sample_values.slice(0,10).reverse();
-  let h_otu = sample.otu_ids.slice(0,10).reverse();
-  let h_otuName = sample.otu_labels.slice(0,10).reverse();
+  newData = {
+    'x': [sample.sample_values.slice(0,10).reverse()],
+    'y': [sample.otu_ids.slice(0,10).reverse().map(s => `OTU ${s}`)],
+    'text': [sample.otu_labels.slice(0,10).reverse()]
+  }
 
-  Plotly.restyle("bar", {x: h_sample, y: h_otu, text: h_otuName})
+  Plotly.restyle("bar", newData)
 }
 
 let makeBubble = (sample) => {
@@ -64,6 +66,16 @@ let makeBubble = (sample) => {
   };
   
   Plotly.newPlot("bubble", data_bub, layout_bub)
+}
+
+let updateBubble = (sample) => {
+  newData = {
+    'x': [sample.otu_ids],
+    'y': [sample.sample_values],
+    'text': [sample.otu_labels]
+  }
+
+  Plotly.restyle("bubble", newData)
 }
 
 let makeDemoTable = (meta_table,  metadata) => {
@@ -90,13 +102,13 @@ d3.json(data_url).then((data) => {
   // create gauge (bonus)
   makeGauge(data.metadata[index]['wfreq']);
 
-  // // creater horizontal bar chart with dropdown menu to display top 10 OTUs
+  // creater horizontal bar chart with dropdown menu to display top 10 OTUs
   makeHBar(data.samples[index]);
  
-  // // create bubble chart that displays each sample
+  // create bubble chart that displays each sample
   makeBubble(data.samples[index]);
 
-  // // display sample metadata (demographic information)
+  // display sample metadata (demographic information)
   makeDemoTable(d3.select("#sample-metadata"),
                 Object.entries(data.metadata[index]))
 })
@@ -108,10 +120,6 @@ let updatePlotly = () => {
     let val = dropdown.property("value")
     let index = data.names.indexOf(val)
     
-    console.log(index);
-    console.log(data.metadata[index]);
-    console.log(data.samples[index]);
-
     //update demo table
     let meta_table = d3.select("#sample-metadata")
     clearDemoTable(meta_table);
@@ -119,17 +127,13 @@ let updatePlotly = () => {
                 Object.entries(data.metadata[index]))
 
     //update gauge
-    makeGauge(data.metadata[index]['wfreq']);
-    //TODO: change from make new table to restyle
+    updateGauge(data.metadata[index]['wfreq'])
     
     //update hbar chart
-    makeHBar(data.samples[index])
-    // updateHBar(data.samples[index])
-    //TODO: change from make new table to restyle
+    updateHBar(data.samples[index]);
     
     //update bubble chart
-    makeBubble(data.samples[index])
-    //TODO: change from make new table to restyle
+    updateBubble(data.samples[index]);
   })
 }
 
