@@ -10,10 +10,11 @@ let makeGauge = (value) => {
       gauge: {
         // set gauge bar to not appear
         bar: {
+          color: 'darkred',
           line: {
-            width: 0
+            width: 0,
           },
-          thickness: 0
+          thickness: .2,
         },
 
         //set range for guage
@@ -31,11 +32,11 @@ let makeGauge = (value) => {
           { range: [7, 8], color: "#88BC8D" },
           { range: [8, 9], color: "#83B588" }
         ],
-        threshold: { //TODO: remove threshold and replace with dial/needle
-          line: { color: "red", width: 4},
-          thickness: 1,
-          value: value
-        },
+        // threshold: { //TODO: remove threshold and replace with dial/needle
+        //   line: { color: "red", width: 4},
+        //   thickness: 1,
+        //   value: value
+        // },
       },
     } ];
 
@@ -52,7 +53,7 @@ let makeGauge = (value) => {
 
 let updateGauge = (sample) => {
   newData = {
-    'value': [sample]
+    'value': [sample],
   }
 
   Plotly.restyle('gauge', newData);
